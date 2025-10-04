@@ -4,12 +4,23 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "currencyrate-fetcher",
+	"name": "jpy-conversion-functions",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-10-04",
 	"observability": {
 		"enabled": true
+	},
+	"kv_namespaces": [
+		{
+			"binding": "API_data",
+			"id": "479de6d17c734ca2965e2281a5df43a8",
+			"remote": true
+		}
+	],
+	"triggers": {
+		"crons": ["0 0 * * *"] // 00:00 UTC once a day
 	}
+	
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

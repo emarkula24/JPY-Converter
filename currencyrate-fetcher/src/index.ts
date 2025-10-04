@@ -11,8 +11,43 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import { fetchExchangerate } from "./handlers/currencyHandler";
+
+
+export interface Env {
+	API_DATA: KVNamespace,
+	SWAP_API_KEY: string
+}
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello worker!');
+		try {
+			
+			const exchangerates = await env.API_DATA.get("rates")
+			if (exchangerates === null) {
+				return new Response("Value not found", {status: 404})
+			}
+			return new Response(exchangerates)
+		}
+		catch(err) {
+			console.error(`KV return error:`, err)
+			const errorMsg =
+			err instanceof Error
+				? err.message
+				: "An unknown error occurred when accessing KV storage"
+			return new Response(errorMsg, {
+				status: 500,
+				headers: {"Content-Type":"application/json"}
+			})
+		}
 	},
+	async scheduled(controller, env, ctx) {
+		const data = await fetchExchangerate(env.SWAP_API_KEY)
+		console.log(data)
+		const jsonData = JSON.stringify(data)
+		await env.API_DATA.put("rates", jsonData)
+	}
 } satisfies ExportedHandler<Env>;
+
+
+
+

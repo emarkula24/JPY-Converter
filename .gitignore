@@ -166,7 +166,7 @@ dist
 !.env.example
 .wrangler/
 
-.vscode/
+currencyrate-fetcher/.vscode/
 dist/
 
 *.iml

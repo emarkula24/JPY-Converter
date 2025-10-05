@@ -15,15 +15,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
 import jpyconverter.composeapp.generated.resources.Res
 import jpyconverter.composeapp.generated.resources.compose_multiplatform
+import kotlinx.coroutines.launch
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
+        var greeting by remember { mutableStateOf("Loading...") }
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(showContent) {
+            scope.launch {
+                if (showContent) {
+                    greeting = try {
+                        CurrencyFetch().getCurrencies()
+                    } catch (e: Exception) {
+                        e.message ?: "error"
+                    }
+                }
+            }
+        }
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.primaryContainer)
@@ -45,5 +59,11 @@ fun App() {
                 }
             }
         }
+        GreetingView(greeting)
     }
+}
+
+@Composable
+fun GreetingView(text: String) {
+    Text(text = text)
 }

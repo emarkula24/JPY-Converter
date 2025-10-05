@@ -15,18 +15,23 @@ import { fetchExchangerate } from "./handlers/currencyHandler";
 
 
 export interface Env {
-	API_DATA: KVNamespace,
-	SWAP_API_KEY: string
+	API_data: KVNamespace,
+	SWOP_API_KEY: string
 }
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		try {
 			
-			const exchangerates = await env.API_DATA.get("rates")
+			const exchangerates = await env.API_data.get("rates")
 			if (exchangerates === null) {
 				return new Response("Value not found", {status: 404})
 			}
-			return new Response(exchangerates)
+			return new Response(exchangerates,{
+				status: 200,
+				headers: {"Content-Type":"application/json"}
+			}
+
+			)
 		}
 		catch(err) {
 			console.error(`KV return error:`, err)
@@ -41,10 +46,9 @@ export default {
 		}
 	},
 	async scheduled(controller, env, ctx) {
-		const data = await fetchExchangerate(env.SWAP_API_KEY)
-		console.log(data)
+		const data = await fetchExchangerate(env.SWOP_API_KEY)
 		const jsonData = JSON.stringify(data)
-		await env.API_DATA.put("rates", jsonData)
+		await env.API_data.put("rates", jsonData)
 	}
 } satisfies ExportedHandler<Env>;
 

@@ -19,7 +19,18 @@
 	],
 	"triggers": {
 		"crons": ["0 0 * * *"] // 00:00 UTC once a day
-	}
+	},
+	"ratelimits": [
+		{
+			"name": "FREE_TIER_LIMITER",
+			"namespace_id": "9364",
+			"simple": {
+				"limit": 144,
+				"period": 60
+			}
+		}
+	]
+
 	
 	/**
 	 * Smart Placement

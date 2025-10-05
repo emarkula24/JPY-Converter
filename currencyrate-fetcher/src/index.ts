@@ -16,36 +16,41 @@ import { fetchExchangerate } from "./handlers/currencyHandler";
 
 export interface Env {
 	API_data: KVNamespace,
-	SWOP_API_KEY: string
+	SWOP_API_KEY: string,
+	FREE_TIER_LIMITER: any
 }
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
+	async fetch(request, env): Promise<Response> {
 		try {
-			
-			const exchangerates = await env.API_data.get("rates")
-			if (exchangerates === null) {
-				return new Response("Value not found", {status: 404})
-			}
-			return new Response(exchangerates,{
-				status: 200,
-				headers: {"Content-Type":"application/json"}
+			const { pathname } = new URL(request.url)
+			const { success } = await env.FREE_TIER_LIMITER.limit({ key: pathname })
+			if (!success) {
+				return new Response(`429 Failure - rate limit exceeded for ${pathname}`, { status: 429 })
 			}
 
-			)
+			const exchangerates = await env.API_data.get("rates")
+
+			if (exchangerates === null) {
+				return new Response("Value not found", { status: 404 })
+			}
+			return new Response(exchangerates, {
+				status: 200,
+				headers: { "Content-Type": "application/json" }
+			})
 		}
-		catch(err) {
+		catch (err) {
 			console.error(`KV return error:`, err)
 			const errorMsg =
-			err instanceof Error
-				? err.message
-				: "An unknown error occurred when accessing KV storage"
+				err instanceof Error
+					? err.message
+					: "An unknown error occurred when accessing KV storage"
 			return new Response(errorMsg, {
 				status: 500,
-				headers: {"Content-Type":"application/json"}
+				headers: { "Content-Type": "application/json" }
 			})
 		}
 	},
-	async scheduled(controller, env, ctx) {
+	async scheduled(controller, env) {
 		const data = await fetchExchangerate(env.SWOP_API_KEY)
 		const jsonData = JSON.stringify(data)
 		await env.API_data.put("rates", jsonData)

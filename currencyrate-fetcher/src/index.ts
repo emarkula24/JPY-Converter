@@ -13,21 +13,23 @@
 
 import { fetchExchangerate } from "./handlers/currencyHandler";
 
-
+//Defines worker attribute types
 export interface Env {
 	API_data: KVNamespace,
 	SWOP_API_KEY: string,
 	FREE_TIER_LIMITER: any
 }
+
 export default {
 	async fetch(request, env): Promise<Response> {
 		try {
+			// Apply ratelimit
 			const { pathname } = new URL(request.url)
 			const { success } = await env.FREE_TIER_LIMITER.limit({ key: pathname })
 			if (!success) {
 				return new Response(`429 Failure - rate limit exceeded for ${pathname}`, { status: 429 })
 			}
-
+			// Get most recent data from KV Storage
 			const exchangerates = await env.API_data.get("rates")
 
 			if (exchangerates === null) {
@@ -50,6 +52,7 @@ export default {
 			})
 		}
 	},
+	// Get most recent data from SWOP API and put to KV Storage
 	async scheduled(controller, env) {
 		const data = await fetchExchangerate(env.SWOP_API_KEY)
 		const jsonData = JSON.stringify(data)

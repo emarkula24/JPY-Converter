@@ -17,7 +17,7 @@ interface GraphQLResponse {
 }
 
 
-
+// Fetches exchangerates from SWOP API
 export const fetchExchangerate = async (api_key: string): Promise<GraphQLResponse | null> => {
     const SWOP_ENDPOINT = `https://swop.cx/graphql?api-key=${api_key}`
     const query = `

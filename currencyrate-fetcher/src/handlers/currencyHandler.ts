@@ -22,7 +22,7 @@ export const fetchExchangerate = async (api_key: string): Promise<GraphQLRespons
     const SWOP_ENDPOINT = `https://swop.cx/graphql?api-key=${api_key}`
     const query = `
         query LatestEuro {
-            latest(baseCurrency: "EUR", quoteCurrencies: ["JPY", "USD", "GBP", "AUD", "NZD","TWD", "THB", "CNY"]) {
+            latest(baseCurrency: "EUR", quoteCurrencies: ["JPY", "USD", "GBP", "AUD", "NZD","TWD", "THB", "CNY", "EUR"]) {
                 date
                 baseCurrency
                 quoteCurrency

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,22 +19,32 @@ import androidx.compose.ui.unit.dp
 import org.jpy.converter.model.Currencies
 import org.jpy.converter.ui.components.LabeledCurrencyDropdown
 import org.jpy.converter.ui.components.NumberInputField
+import org.jpy.converter.ui.viewmodel.ConversionViewModel
 import org.jpy.converter.ui.viewmodel.CurrencyUiState
 import org.jpy.converter.ui.viewmodel.CurrencyViewModel
 
 
 @Composable
 fun HomeScreen(
-    viewModel: CurrencyViewModel,
+    currencyViewModel: CurrencyViewModel,
+    conversionViewModel: ConversionViewModel,
     modifier: Modifier = Modifier,
     contentPaddingValues: PaddingValues = PaddingValues(0.dp),
 ) {
-    when (val state = viewModel.currencyUiState) {
+    LaunchedEffect(Unit) {
+        currencyViewModel.getCurrencies { rates, available ->
+            conversionViewModel.setRates(rates)
+            conversionViewModel.onFromCurrencySelected(available.find { it == "JPY" } ?: available.first())
+            conversionViewModel.onToCurrencySelected(available.find { it == "EUR" } ?: available.getOrNull(1).orEmpty())
+        }
+    }
+    when (val state = currencyViewModel.currencyUiState) {
         is CurrencyUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is CurrencyUiState.Success -> ResultScreen(
-             state.currencies, modifier.fillMaxWidth(), viewModel
+            state.currencies, modifier.fillMaxWidth(), conversionViewModel
         )
-        is CurrencyUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
+
+        is CurrencyUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize())
     }
 }
 
@@ -65,26 +76,28 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
 fun ResultScreen(
     currencies: Currencies,
     modifier: Modifier = Modifier,
-    viewModel: CurrencyViewModel,
+    conversionViewModel: ConversionViewModel,
 ) {
     val quoteCurrencies = currencies.data.latest.map { it.quoteCurrency }
 
     Column {
         LabeledCurrencyDropdown(
             label = "From:",
-            selectedCurrency = viewModel.fromCurrency,
+            selectedCurrency = conversionViewModel.fromCurrency,
             currencyOptions = quoteCurrencies,
-            onCurrencySelected = viewModel::onFromCurrencySelected,
+            onCurrencySelected = conversionViewModel::onFromCurrencySelected,
         )
-
+        Button(onClick = { conversionViewModel.swapCurrencies()}) {
+            Text("Swap")
+        }
         LabeledCurrencyDropdown(
             label = "To:",
-            selectedCurrency = viewModel.toCurrency,
+            selectedCurrency = conversionViewModel.toCurrency,
             currencyOptions = quoteCurrencies,
-            onCurrencySelected = viewModel::onToCurrencySelected,
+            onCurrencySelected = conversionViewModel::onToCurrencySelected,
         )
         Spacer(modifier = Modifier.height(16.dp))
-        NumberInputField(onAmountChanged = viewModel::onAmountChanged)
-        Text(viewModel.conversionResult)
+        NumberInputField(onAmountChanged = conversionViewModel::onAmountChanged)
+        Text(conversionViewModel.conversionResult)
     }
 }

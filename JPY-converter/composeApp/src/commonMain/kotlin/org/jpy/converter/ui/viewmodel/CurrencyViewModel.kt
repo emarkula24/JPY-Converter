@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.jpy.converter.model.Currencies
 import org.jpy.converter.model.CurrencyQuote
 import org.jpy.converter.network.CurrencyApiService
-import org.jpy.converter.util.formatDouble
 
 sealed interface CurrencyUiState {
     data class Success(val currencies: Currencies) : CurrencyUiState

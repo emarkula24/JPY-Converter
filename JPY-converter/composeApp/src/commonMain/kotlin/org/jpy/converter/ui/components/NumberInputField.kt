@@ -12,17 +12,16 @@ import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun NumberInputField(
+    amount: String,
     onAmountChanged: (value: String) -> Unit,
 ) {
     var input by remember { mutableStateOf("") }
 
     TextField(
-        value = input,
-        onValueChange = {
-            input = it
-            onAmountChanged(it)
-        },
+        value = amount,
+        onValueChange = onAmountChanged,
         label = { Text("Amount") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )
 }
+

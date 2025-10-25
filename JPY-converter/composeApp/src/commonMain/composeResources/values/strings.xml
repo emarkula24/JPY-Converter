@@ -1,0 +1,16 @@
+<resources>
+    <string name="intro_message">The conversion is not completely accurate. For JPY conversions there are special inputs and outputs.</string>
+    <string name="error_message">Something went wrong</string>
+    <string name="label_from">From</string>
+    <string name="label_to">To</string>
+    <string name="label_swap">Swap</string>
+    <string name="label_ichi">一</string>
+    <string name="label_sen">千</string>
+    <string name="label_man">万</string>
+    <string name="label_oku">億</string>
+    <string name="rate_message">Today's exchange rate is: </string>
+    <string name="rate_message2"> </string>
+    <string name="label_manualrate">Insert rate</string>
+    <string name="manualrate_text">Manual exchange rate</string>
+    <string name="currency_amount">Amount</string>
+</resources>

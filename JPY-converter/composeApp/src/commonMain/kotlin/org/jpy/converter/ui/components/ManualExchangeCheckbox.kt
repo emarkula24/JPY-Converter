@@ -12,6 +12,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import jpyconverter.composeapp.generated.resources.Res
+import jpyconverter.composeapp.generated.resources.manualrate_text
+import org.jetbrains.compose.resources.stringResource
 import org.jpy.converter.ui.viewmodel.ConversionViewModel
 
 @Composable
@@ -27,7 +30,7 @@ fun ManualExchangeRateCheckbox(conversionViewModel: ConversionViewModel) {
             onCheckedChange = { conversionViewModel.setIsManualRate(it) }
         )
         Text(
-            text = "Manual exchange rate",
+            text = stringResource(Res.string.manualrate_text),
             modifier = Modifier.padding(start = 8.dp)
         )
     }

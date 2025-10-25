@@ -1,0 +1,16 @@
+<resources>
+    <string name="intro_message">為替レートの計算にわずかな誤りがあります</string>
+    <string name="error_message">エラーが発生しました</string>
+    <string name="label_from">金額</string>
+    <string name="label_to">両替額</string>
+    <string name="label_swap">交換</string>
+    <string name="label_ichi">一</string>
+    <string name="label_sen">千</string>
+    <string name="label_man">万</string>
+    <string name="label_oku">億</string>
+    <string name="rate_message">本日の為替レートは </string>
+    <string name="rate_message2">でございます</string>
+    <string name="label_manualrate">レート</string>
+    <string name="manualrate_text">為替レート入力</string>
+    <string name="currency_amount">金額</string>
+</resources>

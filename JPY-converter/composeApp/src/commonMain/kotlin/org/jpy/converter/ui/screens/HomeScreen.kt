@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,10 +26,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.ktor.http.content.TextContent
+import jpyconverter.composeapp.generated.resources.Res
+import jpyconverter.composeapp.generated.resources.error_message
+import jpyconverter.composeapp.generated.resources.intro_message
+import jpyconverter.composeapp.generated.resources.label_from
+import jpyconverter.composeapp.generated.resources.label_ichi
+import jpyconverter.composeapp.generated.resources.label_man
+import jpyconverter.composeapp.generated.resources.label_manualrate
+import jpyconverter.composeapp.generated.resources.label_oku
+import jpyconverter.composeapp.generated.resources.label_sen
+import jpyconverter.composeapp.generated.resources.label_swap
+import jpyconverter.composeapp.generated.resources.manualrate_text
+import jpyconverter.composeapp.generated.resources.rate_message
+import jpyconverter.composeapp.generated.resources.rate_message2
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jpy.converter.model.Currencies
 import org.jpy.converter.ui.components.JpyConversionOutputElement
@@ -38,6 +57,7 @@ import org.jpy.converter.ui.viewmodel.ConversionViewModel
 import org.jpy.converter.ui.viewmodel.CurrencyUiState
 import org.jpy.converter.ui.viewmodel.CurrencyViewModel
 import org.jpy.converter.ui.viewmodel.JpyViewModel
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -85,7 +105,7 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Something went wrong")
+        Text(stringResource(Res.string.error_message))
     }
 }
 
@@ -98,15 +118,16 @@ fun ResultScreen(
 
 ) {
     val quoteCurrencies = currencies.data.latest.map { it.quoteCurrency }
-
+    val scrollState = rememberScrollState()
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .heightIn(min = 400.dp)
+            .fillMaxSize()
+            .padding(16.dp)
+            .imePadding()
+            .verticalScroll(scrollState)
         ,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+
 
     ) {
         Spacer(modifier = Modifier.height(64.dp))
@@ -118,7 +139,7 @@ fun ResultScreen(
         ) {
 
             Text(
-                text = "The conversion is not 100% accurate. For JPY conversions there are special inputs and outputs",
+                text = stringResource(Res.string.intro_message),
                 modifier = Modifier.widthIn(max = 300.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
@@ -128,7 +149,7 @@ fun ResultScreen(
 
 
         LabeledCurrencyDropdown(
-                label = "From",
+                label = stringResource(Res.string.label_from),
                 selectedCurrency = conversionViewModel.fromCurrency,
                 currencyOptions = quoteCurrencies,
                 onCurrencySelected = conversionViewModel::onFromCurrencySelected,
@@ -137,10 +158,10 @@ fun ResultScreen(
                 onClick = { conversionViewModel.swapCurrencies()},
                 modifier = Modifier.align( Alignment.CenterHorizontally)
             ) {
-                Text("Swap")
+                Text(stringResource(Res.string.label_swap))
             }
         LabeledCurrencyDropdown(
-            label = "To",
+            label = stringResource(Res.string.label_from),
             selectedCurrency = conversionViewModel.toCurrency,
             currencyOptions = quoteCurrencies,
             onCurrencySelected = conversionViewModel::onToCurrencySelected,
@@ -149,7 +170,7 @@ fun ResultScreen(
         if (conversionViewModel.fromCurrency == "JPY") {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 JpyMultiplierSelectElement(
-                    label = "一",
+                    label = stringResource(Res.string.label_ichi),
                     intValue = 1,
                     selectedMultiplier = jpyViewModel.selectedJpyMultiplier,
                     onMultiplierSelected = { label, value ->
@@ -158,7 +179,7 @@ fun ResultScreen(
                     }
                 )
                 JpyMultiplierSelectElement(
-                    label = "千",
+                    label = stringResource(Res.string.label_sen),
                     intValue = 1000,
                     selectedMultiplier = jpyViewModel.selectedJpyMultiplier,
                     onMultiplierSelected = { label, value ->
@@ -167,7 +188,7 @@ fun ResultScreen(
                     }
                 )
                 JpyMultiplierSelectElement(
-                    label = "万",
+                    label = stringResource(Res.string.label_man),
                     intValue = 10000,
                     selectedMultiplier = jpyViewModel.selectedJpyMultiplier,
                     onMultiplierSelected = { label, value ->
@@ -176,7 +197,7 @@ fun ResultScreen(
                     }
                 )
                 JpyMultiplierSelectElement(
-                    label = "億",
+                    label = stringResource(Res.string.label_oku),
                     intValue = 100000000,
                     selectedMultiplier = jpyViewModel.selectedJpyMultiplier,
                     onMultiplierSelected = { label, value ->
@@ -200,11 +221,14 @@ fun ResultScreen(
                         jpyViewModel = jpyViewModel,
                         conversionResult = conversionViewModel.conversionResult
                     )
-                    Text(text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency))
+                    Text(
+                        text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency),
+                    )
 
                 } else {
                     Text(conversionViewModel.conversionResult)
-                    Text(text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency))
+                    Text(text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency),
+                    )
                 }
 
             }
@@ -212,7 +236,8 @@ fun ResultScreen(
 
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "today's exchange rate is: ${conversionViewModel.rate}")
+        Text(text = stringResource(Res.string.rate_message) + conversionViewModel.rate +
+                    stringResource(Res.string.rate_message2))
 
         ManualExchangeRateCheckbox(conversionViewModel)
 
@@ -220,9 +245,11 @@ fun ResultScreen(
             OutlinedTextField(
                 value = conversionViewModel.manualRate,
                 onValueChange = conversionViewModel::onManualRateChanged,
-                label = {Text("Insert rate")},
+                label = {
+                    Text(stringResource(Res.string.label_manualrate)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }

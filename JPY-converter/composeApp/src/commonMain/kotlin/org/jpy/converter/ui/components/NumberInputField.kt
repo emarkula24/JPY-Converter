@@ -9,17 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
+import org.jpy.converter.ui.viewmodel.ConversionViewModel
 
 @Composable
-fun NumberInputField(
-    amount: String,
-    onAmountChanged: (value: String) -> Unit,
-) {
-    var input by remember { mutableStateOf("") }
-
+fun NumberInputField(viewModel: ConversionViewModel) {
     TextField(
-        value = amount,
-        onValueChange = onAmountChanged,
+        value = viewModel.currencyAmount,
+        onValueChange = viewModel::onAmountChanged,
         label = { Text("Amount") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     )

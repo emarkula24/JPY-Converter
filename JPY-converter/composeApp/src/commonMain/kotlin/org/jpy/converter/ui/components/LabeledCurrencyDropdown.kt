@@ -11,6 +11,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -40,11 +41,6 @@ fun LabeledCurrencyDropdown(
         horizontalArrangement = Arrangement.SpaceBetween
 
     ) {
-        Text(
-            text = label,
-            modifier = Modifier
-                .weight(1f)
-        )
 
         ExposedDropdownMenuBox(
             expanded = expanded,
@@ -52,11 +48,11 @@ fun LabeledCurrencyDropdown(
             modifier = Modifier
                 .weight(4f)
         ) {
-            TextField(
+            OutlinedTextField(
                 value = selectedCurrency,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Currency") },
+                label = { Text(label) },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },

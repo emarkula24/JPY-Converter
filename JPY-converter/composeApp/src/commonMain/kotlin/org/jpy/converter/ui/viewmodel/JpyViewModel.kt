@@ -8,11 +8,9 @@ import org.jpy.converter.util.formatDouble
 
 class JpyViewModel : ViewModel() {
 
-    var selectedJpyMultiplier: String by mutableStateOf("")
+    var selectedJpyMultiplier: String by mutableStateOf("一")
         private set
     var selectedIntValue: Int by mutableStateOf(0)
-        private set
-    var multiplierSelectFlag: Boolean by mutableStateOf(false)
         private set
     var formattedJpyOutput: String by mutableStateOf("")
         private set
@@ -23,7 +21,7 @@ class JpyViewModel : ViewModel() {
     fun onMultiplierSelected(multiplier: String, intValue: Int) {
         selectedJpyMultiplier = multiplier
         selectedIntValue = intValue
-        multiplierSelectFlag = !multiplierSelectFlag
+
     }
 
     fun formatJpyValue(value: Double): String {

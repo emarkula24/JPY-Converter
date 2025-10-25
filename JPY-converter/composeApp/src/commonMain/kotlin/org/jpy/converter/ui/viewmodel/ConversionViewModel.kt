@@ -22,6 +22,11 @@ class ConversionViewModel : ViewModel() {
     var currencyRates: List<CurrencyQuote> = emptyList()
         private set
     var rate: String by mutableStateOf("")
+
+    var isManualRates: Boolean by mutableStateOf(false)
+        private set
+    var manualRate by mutableStateOf("")
+        private set
     var jpyMultiplier: Int = 0
         private set
 
@@ -42,11 +47,26 @@ class ConversionViewModel : ViewModel() {
         toCurrency = currency
         updateConversion()
     }
+
     fun onAmountChanged(amount: String) {
-        currencyAmount = amount
-        updateConversion()
+        val maxDigits = 9
+        if (amount.length <= maxDigits && amount.all { it.isDigit() }) {
+            currencyAmount = amount
+            updateConversion()
+        }
     }
 
+    fun setIsManualRate(enabled: Boolean) {
+        isManualRates = enabled
+        if (!enabled) {
+            manualRate = ""
+        }
+        updateConversion()
+    }
+    fun onManualRateChanged(rate: String) {
+        manualRate = rate
+        updateConversion()
+    }
     fun swapCurrencies() {
         val temp = fromCurrency
         fromCurrency = toCurrency
@@ -73,40 +93,43 @@ class ConversionViewModel : ViewModel() {
         return symbols[code] ?: code
     }
 
-    private fun updateConversion() {
-        val fromQuote = currencyRates.find { it.quoteCurrency == fromCurrency }
-        val toQuote = currencyRates.find { it.quoteCurrency == toCurrency }
-        val amount = currencyAmount.trim().toDoubleOrNull() ?: return
 
-        if (fromQuote != null && toQuote != null) {
-            val adjustedAmount = if (fromCurrency == "JPY") {
-                amount * jpyMultiplier
-            } else {
-                amount
-            }
+
+    private fun updateConversion() {
+        val amount = currencyAmount.trim().toDoubleOrNull() ?: return
+        val adjustedAmount = if (fromCurrency == "JPY") amount * jpyMultiplier else amount
+
+        val convertedAmount: Double
+        val effectiveRate: Double
+
+        if (isManualRates) {
+            effectiveRate = manualRate.toDoubleOrNull() ?: return
+            convertedAmount = adjustedAmount * effectiveRate
+        } else {
+            val fromQuote = currencyRates.find { it.quoteCurrency == fromCurrency }
+            val toQuote = currencyRates.find { it.quoteCurrency == toCurrency }
+            if (fromQuote == null || toQuote == null) return
             val amountInEUR = if (fromCurrency == "EUR") {
                 adjustedAmount
             } else {
                 adjustedAmount / fromQuote.quote
             }
-            val convertedAmount = if (toCurrency == "EUR") {
+
+            convertedAmount = if (toCurrency == "EUR") {
                 amountInEUR
             } else {
                 amountInEUR * toQuote.quote
             }
 
-            conversionResult = formatDouble(convertedAmount)
-
-            val effectiveRate = when {
+            effectiveRate = when {
                 fromCurrency == "EUR" -> toQuote.quote
                 toCurrency == "EUR" -> 1 / fromQuote.quote
                 else -> toQuote.quote / fromQuote.quote
             }
-            rate = formatDouble(effectiveRate, 6)
-        } else {
-            conversionResult = ""
-            rate = ""
         }
 
+        conversionResult = formatDouble(convertedAmount)
+        rate = formatDouble(effectiveRate, 4)
     }
+
 }

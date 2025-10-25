@@ -1,6 +1,7 @@
 package org.jpy.converter.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,20 +9,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.ktor.http.content.TextContent
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jpy.converter.model.Currencies
 import org.jpy.converter.ui.components.JpyConversionOutputElement
 import org.jpy.converter.ui.components.JpyMultiplierSelectElement
 import org.jpy.converter.ui.components.LabeledCurrencyDropdown
+import org.jpy.converter.ui.components.ManualExchangeRateCheckbox
 import org.jpy.converter.ui.components.NumberInputField
 import org.jpy.converter.ui.viewmodel.ConversionViewModel
 import org.jpy.converter.ui.viewmodel.CurrencyUiState
@@ -45,7 +56,7 @@ fun HomeScreen(
         }
     }
     when (val state = currencyViewModel.currencyUiState) {
-        is CurrencyUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is CurrencyUiState.Loading -> LoadingScreen()
         is CurrencyUiState.Success -> ResultScreen(
             state.currencies, modifier.fillMaxWidth(), conversionViewModel, jpyViewModel
         )
@@ -60,7 +71,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
     ) {
         CircularProgressIndicator(
-            modifier = modifier.width(2.dp),
+            modifier = modifier.width(8.dp),
             color = MaterialTheme.colorScheme.primary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -88,28 +99,58 @@ fun ResultScreen(
 ) {
     val quoteCurrencies = currencies.data.latest.map { it.quoteCurrency }
 
-    Column {
-        LabeledCurrencyDropdown(
-            label = "From:",
-            selectedCurrency = conversionViewModel.fromCurrency,
-            currencyOptions = quoteCurrencies,
-            onCurrencySelected = conversionViewModel::onFromCurrencySelected,
-        )
-        Button(onClick = { conversionViewModel.swapCurrencies()}) {
-            Text("Swap")
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .heightIn(min = 400.dp)
+        ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+
+    ) {
+        Spacer(modifier = Modifier.height(64.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+
+            Text(
+                text = "The conversion is not 100% accurate. For JPY conversions there are special inputs and outputs",
+                modifier = Modifier.widthIn(max = 300.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+
         }
+
+
         LabeledCurrencyDropdown(
-            label = "To:",
+                label = "From",
+                selectedCurrency = conversionViewModel.fromCurrency,
+                currencyOptions = quoteCurrencies,
+                onCurrencySelected = conversionViewModel::onFromCurrencySelected,
+            )
+            Button(
+                onClick = { conversionViewModel.swapCurrencies()},
+                modifier = Modifier.align( Alignment.CenterHorizontally)
+            ) {
+                Text("Swap")
+            }
+        LabeledCurrencyDropdown(
+            label = "To",
             selectedCurrency = conversionViewModel.toCurrency,
             currencyOptions = quoteCurrencies,
             onCurrencySelected = conversionViewModel::onToCurrencySelected,
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         if (conversionViewModel.fromCurrency == "JPY") {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 JpyMultiplierSelectElement(
-                    label = "百",
-                    intValue = 100,
+                    label = "一",
+                    intValue = 1,
                     selectedMultiplier = jpyViewModel.selectedJpyMultiplier,
                     onMultiplierSelected = { label, value ->
                         jpyViewModel.onMultiplierSelected(label, value)
@@ -145,9 +186,13 @@ fun ResultScreen(
                 )
             }
         }
-        NumberInputField(
-            amount = conversionViewModel.currencyAmount,
-            onAmountChanged = conversionViewModel::onAmountChanged)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        NumberInputField(viewModel = conversionViewModel)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             if (conversionViewModel.currencyAmount.isNotBlank()) {
                 if (conversionViewModel.toCurrency == "JPY") {
@@ -168,5 +213,16 @@ fun ResultScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "today's exchange rate is: ${conversionViewModel.rate}")
+
+        ManualExchangeRateCheckbox(conversionViewModel)
+
+        if (conversionViewModel.isManualRates) {
+            OutlinedTextField(
+                value = conversionViewModel.manualRate,
+                onValueChange = conversionViewModel::onManualRateChanged,
+                label = {Text("Insert rate")},
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            )
+        }
     }
 }

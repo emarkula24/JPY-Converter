@@ -14,22 +14,6 @@ import org.jpy.converter.ui.viewmodel.ConversionViewModel
 import org.jpy.converter.ui.viewmodel.JpyViewModel
 
 
-var customAppThemeIsDark by mutableStateOf<Boolean?>(null)
-expect object LocalAppTheme {
-    val current: Boolean @Composable get
-    @Composable infix fun provides(value: Boolean?): ProvidedValue<*>
-}
-
-@Composable
-fun AppEnvironment(content: @Composable () -> Unit) {
-    CompositionLocalProvider(
-        LocalAppTheme provides customAppThemeIsDark,
-    ) {
-        key(customAppThemeIsDark) {
-            content()
-        }
-    }
-}
 @Composable
 fun App(
     currencyViewModel: CurrencyViewModel = CurrencyViewModel(),

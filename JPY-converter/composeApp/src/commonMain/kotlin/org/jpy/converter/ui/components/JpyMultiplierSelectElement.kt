@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.jpy.converter.themes.LocalColors
 
 @Composable
 fun JpyMultiplierSelectElement(
@@ -19,8 +20,8 @@ fun JpyMultiplierSelectElement(
     onMultiplierSelected: (String, Int) -> Unit,
 ) {
     val isSelected = selectedMultiplier == label
-    val backgroundColor = if (isSelected) Color(0xFF1976D2) else Color(0xFFE0E0E0)
-    val contentColor = if (isSelected) Color.White else Color.Black
+    val backgroundColor = if (isSelected) LocalColors.current.primary else LocalColors.current.tertiary
+    val contentColor = if (isSelected) LocalColors.current.onPrimary else LocalColors.current.onBackground
     ElevatedButton(
         onClick = { onMultiplierSelected(label, intValue) },
         colors = ButtonDefaults.elevatedButtonColors(

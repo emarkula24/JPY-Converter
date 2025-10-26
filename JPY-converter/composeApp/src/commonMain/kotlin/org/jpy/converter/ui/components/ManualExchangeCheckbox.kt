@@ -3,6 +3,7 @@ package org.jpy.converter.ui.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import jpyconverter.composeapp.generated.resources.Res
 import jpyconverter.composeapp.generated.resources.manualrate_text
 import org.jetbrains.compose.resources.stringResource
+import org.jpy.converter.themes.LocalColors
 import org.jpy.converter.ui.viewmodel.ConversionViewModel
 
 @Composable
@@ -27,7 +29,11 @@ fun ManualExchangeRateCheckbox(conversionViewModel: ConversionViewModel) {
     ) {
         Checkbox(
             checked = conversionViewModel.isManualRates,
-            onCheckedChange = { conversionViewModel.setIsManualRate(it) }
+            onCheckedChange = { conversionViewModel.setIsManualRate(it) },
+            colors = CheckboxDefaults.colors(
+                checkedColor = LocalColors.current.primary,
+                uncheckedColor = LocalColors.current.primary,
+            )
         )
         Text(
             text = stringResource(Res.string.manualrate_text),

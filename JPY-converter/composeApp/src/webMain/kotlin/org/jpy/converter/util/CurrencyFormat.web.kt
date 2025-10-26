@@ -5,7 +5,7 @@ import kotlin.js.js
 
 
 @OptIn(ExperimentalWasmJsInterop::class)
-@JsFun("value, decimals => value.toFixed(decimals)")
+@JsFun("(value, decimals) => value.toFixed(decimals)")
 external fun toFixed(value: Double, decimals: Int): String
 
 actual fun formatDouble(value: Double, decimals: Int): String {

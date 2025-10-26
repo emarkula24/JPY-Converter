@@ -20,37 +20,79 @@ export interface Env {
 	FREE_TIER_LIMITER: any
 }
 
+const corsHeaders = {
+	"Access-Control-Allow-Origin": "https://emarkula24.github.io", // or specify a domain instead of "*"
+	"Access-Control-Allow-Methods": "GET, OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type",
+}
+
+async function getCurrencyData(request: Request, env: Env): Promise<Response> {
+	try {
+		// Apply ratelimit
+		const { pathname } = new URL(request.url)
+		const { success } = await env.FREE_TIER_LIMITER.limit({ key: pathname })
+		if (!success) {
+			return new Response(`429 Failure - rate limit exceeded for ${pathname}`, {
+					status: 429, 
+					headers: {
+					...corsHeaders,
+					"Content-Type": "application/json"
+				}
+			})
+		}
+		// Get most recent data from KV Storage
+		const exchangerates = await env.API_data.get("rates")
+
+		if (exchangerates === null) {
+			return new Response("Value not found", { 
+				status: 404, 
+				headers: {
+					...corsHeaders,
+					"Content-Type": "application/json"
+				}
+			})
+		}
+		return new Response(exchangerates, {
+			status: 200,
+			headers: {
+				...corsHeaders,
+				"Content-Type": "application/json" }
+		})
+	}
+	catch (err) {
+		console.error(`KV return error:`, err)
+		const errorMsg =
+			err instanceof Error
+				? err.message
+				: "An unknown error occurred when accessing KV storage"
+		return new Response(errorMsg, {
+			status: 500,
+			headers: {
+				...corsHeaders,
+				"Content-Type": "application/json" }
+		})
+	}
+}
+
 export default {
 	async fetch(request, env): Promise<Response> {
-		try {
-			// Apply ratelimit
-			const { pathname } = new URL(request.url)
-			const { success } = await env.FREE_TIER_LIMITER.limit({ key: pathname })
-			if (!success) {
-				return new Response(`429 Failure - rate limit exceeded for ${pathname}`, { status: 429 })
-			}
-			// Get most recent data from KV Storage
-			const exchangerates = await env.API_data.get("rates")
 
-			if (exchangerates === null) {
-				return new Response("Value not found", { status: 404 })
-			}
-			return new Response(exchangerates, {
+
+		if (request.method === "OPTIONS") {
+			return new Response(null, {
 				status: 200,
-				headers: { "Content-Type": "application/json" }
+				headers: corsHeaders
 			})
 		}
-		catch (err) {
-			console.error(`KV return error:`, err)
-			const errorMsg =
-				err instanceof Error
-					? err.message
-					: "An unknown error occurred when accessing KV storage"
-			return new Response(errorMsg, {
-				status: 500,
-				headers: { "Content-Type": "application/json" }
+		else if (request.method === "GET") {
+			return getCurrencyData(request, env)
+		} else {
+			return new Response("Method not allowed", {
+				status: 405,
+				headers: corsHeaders
 			})
 		}
+		
 	},
 	// Get most recent data from SWOP API and put to KV Storage
 	async scheduled(controller, env) {

@@ -39,6 +39,7 @@ fun NumberInputField(viewModel: ConversionViewModel) {
             unfocusedContainerColor = Color.Transparent,
             focusedContainerColor = Color.Transparent,
             focusedLabelColor = LocalColors.current.primary,
+            unfocusedLabelColor = LocalColors.current.primary,
         )
     )
 }

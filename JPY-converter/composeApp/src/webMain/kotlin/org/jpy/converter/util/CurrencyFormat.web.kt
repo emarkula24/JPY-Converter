@@ -3,7 +3,11 @@ package org.jpy.converter.util
 import kotlin.js.ExperimentalWasmJsInterop
 import kotlin.js.js
 
+
 @OptIn(ExperimentalWasmJsInterop::class)
+@JsFun("value => value.toFixed(decimals)")
+external fun toFixed(value: Double, decimals: Int): String
+
 actual fun formatDouble(value: Double, decimals: Int): String {
-    return js("value.toFixed(decimals)") as String
+    return toFixed(value, decimals)
 }

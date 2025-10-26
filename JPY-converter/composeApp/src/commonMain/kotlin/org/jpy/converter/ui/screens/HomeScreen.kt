@@ -68,6 +68,8 @@ fun HomeScreen(
     jpyViewModel: JpyViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val state = currencyViewModel.currencyUiState
+
     LaunchedEffect(Unit) {
         currencyViewModel.getCurrencies { rates, available ->
             conversionViewModel.setRates(rates)
@@ -88,10 +90,12 @@ fun HomeScreen(
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
         CircularProgressIndicator(
-            modifier = modifier.width(8.dp),
+            modifier = modifier.width(40.dp),
             color = MaterialTheme.colorScheme.primary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant
         )

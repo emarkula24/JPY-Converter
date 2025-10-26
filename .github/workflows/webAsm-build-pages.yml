@@ -31,12 +31,12 @@ jobs:
 
       - name: Execute Gradle build
         run: ./gradlew :composeApp:wasmJsBrowserDistribution
-        working-directory: JPY-Converter
+        working-directory: JPY-converter
 
       - name: Upload static file artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: JPY-Converter/composeApp/build/dist/wasmJs/productionExecutable
+          path: JPY-converter/composeApp/build/dist/wasmJs/productionExecutable
   deploy:
     environment:
       name: github-pages

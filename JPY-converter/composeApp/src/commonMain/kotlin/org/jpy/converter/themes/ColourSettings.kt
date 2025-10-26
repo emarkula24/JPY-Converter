@@ -1,9 +1,17 @@
 package org.jpy.converter.themes
 
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import jpyconverter.composeapp.generated.resources.NotoSansJP_VariableFont_wght
+import jpyconverter.composeapp.generated.resources.Res
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.Font
 import org.jpy.converter.LocalAppTheme
 
 
@@ -22,6 +30,24 @@ val DarkJpyColors = Colors(
     tertiary = Color(0xFFE0E0E0))
 
 val LocalColors = staticCompositionLocalOf { LightJpyColors }
+val LocalTypography = staticCompositionLocalOf { Typography() }
+
+
+@Composable
+@OptIn(ExperimentalResourceApi::class)
+fun rememberJpyFontFamily(): FontFamily {
+    val font = Font(Res.font.NotoSansJP_VariableFont_wght, weight = FontWeight.Normal)
+    return FontFamily(font)
+}
+
+
+object ConverterTheme {
+    val colors: Colors
+        @Composable get() = LocalColors.current
+
+    val typo: Typography
+        @Composable get() = LocalTypography.current
+}
 
 @Composable
 fun ConverterTheme(
@@ -29,7 +55,19 @@ fun ConverterTheme(
     content: @Composable () -> Unit) {
     val colors = if (darkTheme) DarkJpyColors else LightJpyColors
 
-    CompositionLocalProvider(LocalColors provides colors) {
+
+    val typography = Typography(
+        bodyLarge = TextStyle(fontFamily = rememberJpyFontFamily()),
+        bodyMedium = TextStyle(fontFamily = rememberJpyFontFamily()),
+        titleLarge = TextStyle(fontFamily = rememberJpyFontFamily())
+        // Add more styles as needed
+    )
+
+    CompositionLocalProvider(
+        LocalColors provides colors,
+        LocalTypography provides typography
+    )
+    {
         content()
     }
 }

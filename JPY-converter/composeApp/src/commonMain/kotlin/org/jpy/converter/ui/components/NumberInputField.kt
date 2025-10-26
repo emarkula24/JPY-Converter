@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import jpyconverter.composeapp.generated.resources.Res
 import jpyconverter.composeapp.generated.resources.currency_amount
 import org.jetbrains.compose.resources.stringResource
+import org.jpy.converter.themes.ConverterTheme
 import org.jpy.converter.themes.LocalColors
 import org.jpy.converter.ui.viewmodel.ConversionViewModel
 
@@ -28,7 +29,7 @@ fun NumberInputField(viewModel: ConversionViewModel) {
     OutlinedTextField(
         value = viewModel.currencyAmount,
         onValueChange = viewModel::onAmountChanged,
-        label = { Text(stringResource(Res.string.currency_amount)) },
+        label = { Text(stringResource(Res.string.currency_amount), style = ConverterTheme.typo.bodyMedium,) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier
             .fillMaxWidth()

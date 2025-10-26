@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.jpy.converter.themes.ConverterTheme
 import org.jpy.converter.themes.LocalColors
 
 @Composable
@@ -30,6 +31,6 @@ fun JpyMultiplierSelectElement(
         ),
         modifier = Modifier.padding(4.dp)
         ) {
-        Text(label)
+        Text(label, style = ConverterTheme.typo.bodyMedium,)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.sp
 import jpyconverter.composeapp.generated.resources.Res
 import jpyconverter.composeapp.generated.resources.error_message
 import org.jetbrains.compose.resources.stringResource
+import org.jpy.converter.themes.ConverterTheme
 
 @Composable
 fun ErrorScreen(modifier: Modifier = Modifier) {
@@ -22,6 +23,7 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(Res.string.error_message),
             color = MaterialTheme.colorScheme.error,
+            style = ConverterTheme.typo.bodyMedium,
             fontSize = 24.sp,
             textAlign = TextAlign.Center
         )

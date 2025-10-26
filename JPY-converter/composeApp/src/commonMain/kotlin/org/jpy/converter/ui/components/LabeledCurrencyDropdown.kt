@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import org.jpy.converter.themes.ConverterTheme
 import org.jpy.converter.themes.LocalColors
 
 
@@ -56,6 +57,7 @@ fun LabeledCurrencyDropdown(
                 readOnly = true,
                 label = { Text(
                     label,
+                    style = ConverterTheme.typo.bodyMedium,
 
                 )
                         },
@@ -84,7 +86,7 @@ fun LabeledCurrencyDropdown(
             ) {
                 currencyOptions.forEach { currency ->
                     DropdownMenuItem(
-                        text = { Text(currency) },
+                        text = { Text(currency, style = ConverterTheme.typo.bodyMedium,) },
                         onClick = {
                             onCurrencySelected(currency)
                             expanded = false

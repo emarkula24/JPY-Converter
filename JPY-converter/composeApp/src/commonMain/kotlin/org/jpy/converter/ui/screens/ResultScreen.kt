@@ -46,6 +46,7 @@ import jpyconverter.composeapp.generated.resources.rate_message
 import jpyconverter.composeapp.generated.resources.rate_message2
 import org.jetbrains.compose.resources.stringResource
 import org.jpy.converter.model.Currencies
+import org.jpy.converter.themes.ConverterTheme
 import org.jpy.converter.themes.LocalColors
 import org.jpy.converter.ui.components.JpyConversionOutputElement
 import org.jpy.converter.ui.components.JpyMultiplierSelectElement
@@ -124,7 +125,7 @@ fun ResultScreen(
                 border = BorderStroke(1.dp, LocalColors.current.primary),
 
                 ) {
-                Text(stringResource(Res.string.label_swap))
+                Text(stringResource(Res.string.label_swap), style = ConverterTheme.typo.bodyMedium,)
             }
             LabeledCurrencyDropdown(
                 label = stringResource(Res.string.label_from),
@@ -188,13 +189,13 @@ fun ResultScreen(
                             conversionResult = conversionViewModel.conversionResult
                         )
                         Text(
-                            text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency),
+                            text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency), style = ConverterTheme.typo.bodyMedium
                         )
 
                     } else {
-                        Text(conversionViewModel.conversionResult)
+                        Text(conversionViewModel.conversionResult, style = ConverterTheme.typo.bodyMedium,)
                         Text(
-                            text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency),
+                            text = "" + conversionViewModel.getCurrencySymbol(conversionViewModel.toCurrency), style = ConverterTheme.typo.bodyMedium
                         )
                     }
 
@@ -205,7 +206,8 @@ fun ResultScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(Res.string.rate_message) + conversionViewModel.rate +
-                        stringResource(Res.string.rate_message2)
+                        stringResource(Res.string.rate_message2),
+                style = ConverterTheme.typo.bodyMedium,
             )
 
             ManualExchangeRateCheckbox(conversionViewModel)
@@ -215,7 +217,7 @@ fun ResultScreen(
                     value = conversionViewModel.manualRate,
                     onValueChange = conversionViewModel::onManualRateChanged,
                     label = {
-                        Text(stringResource(Res.string.label_manualrate))
+                        Text(stringResource(Res.string.label_manualrate), style = ConverterTheme.typo.bodyMedium,)
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedLabelColor = LocalColors.current.primary,

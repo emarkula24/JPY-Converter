@@ -169,6 +169,7 @@ dist
 currencyrate-fetcher/.vscode/
 dist/
 
+
 *.iml
 .kotlin
 .gradle
@@ -176,6 +177,7 @@ dist/
 xcuserdata
 !src/**/build/
 local.properties
+keystore.properties
 .idea
 .DS_Store
 captures

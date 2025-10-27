@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jpy.converter.themes.LocalColors
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
@@ -20,7 +21,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator(
             modifier = modifier.width(40.dp),
-            color = MaterialTheme.colorScheme.primary,
+            color = LocalColors.current.primary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant
         )
     }

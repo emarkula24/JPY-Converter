@@ -1,5 +1,5 @@
 <resources>
-    <string name="intro_message">The conversion is not completely accurate. For JPY conversions there are special inputs and outputs.</string>
+    <string name="intro_message">Actual rates may vary slightly</string>
     <string name="error_message">Unable to fetch currency data. Please check your internet connection.</string>
     <string name="label_from">From</string>
     <string name="label_to">To</string>

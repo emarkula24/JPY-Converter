@@ -1,5 +1,5 @@
 <resources>
-    <string name="intro_message">為替レートの計算にわずかな誤りがあります</string>
+    <string name="intro_message">実際の為替レートに些細な違いがあります</string>
     <string name="error_message">インターネット接続を確認してください</string>
     <string name="label_from">金額</string>
     <string name="label_to">両替額</string>
